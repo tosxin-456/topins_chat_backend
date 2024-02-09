@@ -1,5 +1,9 @@
+require('dotenv').config()
+const dotenv = require('../../.env')
 const userModel = require('../Models/userModel')
 const currentDate = new Date();
+const cryptoHash = require('node:crypto')
+const jwt = require('jsonwebtoken')
 
 let month = currentDate.getMonth() + 1;
 if (month > 12) {
@@ -46,6 +50,7 @@ function hashValue(value) {
   hash.update(value);
   return hash.digest("base64");
 }
+
 const register = async (req, res) => {
   // const result = validator.registerValidator.safeParse(req.body)
   // if(!result.success){
@@ -76,18 +81,14 @@ const register = async (req, res) => {
       });
       await newuser.save();
       res.json(`new user unique id is ${newuser.id}`);
-      await verifyMail(newuser);
     }
   } catch (error) {
-    res.status(500).json({ message: 'Could not save user.', error });
+    res.status(500).json('Could not save user.')
+    console.log(error)
   }
 };
 
 const login = async (req, res) => {
-  // const loginResult = validator.loginValidator.safeParse(req.body);
-  // if (!loginResult.success) {
-  //   return res.status(401).json(formatZodError(loginResult.error.issues));
-  // }
   try {
     const id = req.body.id;
     const password = req.body.password;
@@ -98,8 +99,8 @@ const login = async (req, res) => {
       const passwordMatched = await hashValue( password )
       if (passwordMatched === user.password) {
         const payload = {user_id:user._id,name:user.name, role:user.role}
-        const secretKey = process.env. JWT_SECRET
-        const token = jwt.sign(payload,secretKey)
+        const secretKey = process.env.JWT_SECRET
+        const token = jwt.sign(payload, secretKey)
         res.status(200).json(token)
         await userModel.updateOne({ id: user.id }, { Status: "Online" });
       } else {

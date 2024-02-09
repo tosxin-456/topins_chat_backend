@@ -16,4 +16,6 @@ app.listen( port, () => {
 })
 //Routes
 const userRoute = require('./Routes/userRoute');
+
+
 app.use('/user',userRoute)
