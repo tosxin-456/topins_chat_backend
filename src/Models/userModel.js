@@ -36,12 +36,12 @@ const userSchema = new schema({
   },
   status: {
     type: String,
-    default: ['Offline'],
+    default: 'Offline',
     enum:['Offline','Online']
   },
   role: {
     type: String,
-    default: ['patient'],
+    default: 'patient',
     enum:['patient','admin']
   }
 })
