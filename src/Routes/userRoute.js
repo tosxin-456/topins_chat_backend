@@ -16,7 +16,9 @@ route.post('/login', userController.login)
 
 route.post('/profilePic',jwtToken.verifyToken, profilePic.profilePictureUser)
 
-route.post('/chat',jwtToken.verifyToken, profilePic.profilePictureUser)
+route.post('/chat', jwtToken.verifyToken, chat.newChatUser)
+
+route.get ('/allchat', jwtToken.verifyToken , chat.allChatsUser)
 
 
 

@@ -7,12 +7,13 @@ const chatSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
-  receiver: {
-    type:mongoose.Schema.Types.ObjectId,
+  question: {
+    type: String,
     required: true
   },
-  message: {
+  response: {
     type: String,
+    default:'',
     required: true
   },
   time: {
