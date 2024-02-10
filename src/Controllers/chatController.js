@@ -1,6 +1,6 @@
 // Import necessary modules
 const socketIo = require('socket.io');
-const chatModel = require('./models/chat'); // Assuming you have a model for chat messages
+const chatModel = require('../Models/chatModel'); // Assuming you have a model for chat messages
 
 // Initialize Socket.IO server
 const initSocketIo = (server) => {
