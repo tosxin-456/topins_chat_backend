@@ -4,6 +4,7 @@ const userController = require('../Controllers/userController')
 const profilePic = require('../Controllers/profilePictureController')
 const jwtToken = require('../../config/jwt')
 const chat = require('../Controllers/chatController')
+const notify = require('../Controllers/notificationsController')
 
 
 route.get('/', (req,res) => {
@@ -20,6 +21,7 @@ route.post('/chat', jwtToken.verifyToken, chat.newChatUser)
 
 route.get ('/allchat', jwtToken.verifyToken , chat.allChatsUser)
 
+route.post('/notify', jwtToken.verifyToken,jwtToken.verifyAdmin, notify.newNotification)
 
 
 
