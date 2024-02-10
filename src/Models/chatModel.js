@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema()
+const Schema = mongoose.Schema
 
 
 const chatSchema = new Schema({
   sender: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     required: true
   },
   receiver: {
-    type: Schema.Types.ObjectId,
+    type:mongoose.Schema.Types.ObjectId,
     required: true
   },
   message: {
