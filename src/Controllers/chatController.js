@@ -1,6 +1,6 @@
 // Import necessary modules
 const socketIo = require('socket.io');
-const ChatModel = require('./models/chat'); // Assuming you have a model for chat messages
+const chatModel = require('./models/chat'); // Assuming you have a model for chat messages
 
 // Initialize Socket.IO server
 const initSocketIo = (server) => {
@@ -14,7 +14,7 @@ const initSocketIo = (server) => {
     socket.on('send-message', async (messageData) => {
       try {
         // Save message to the database
-        const newMessage = await ChatModel.create(messageData);
+        const newMessage = await chatModel.create(messageData);
 
         // Broadcast the message to all connected clients
         io.emit('receive-message', newMessage);
