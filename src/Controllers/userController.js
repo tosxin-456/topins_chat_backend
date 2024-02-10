@@ -94,6 +94,7 @@ const login = async (req, res) => {
     const password = req.body.password;
 
     const user = await userModel.findOne({ id });
+    // console.log(user)
 
     if (user) {
       const passwordMatched = await hashValue( password )
