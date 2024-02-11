@@ -12,8 +12,7 @@ const jwt = require('jsonwebtoken');
     ){
       try {
         token =  req.headers.authorization.split(" ")[1];
-        //  console.log(token)
-        const decoded = jwt.verify(token,process.env.JWT_SECRET)
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
           req.user = await userModel.findById(decoded.user_id)
     //  console.log(req.user)
           next();

@@ -2,18 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema
 
 
-const chatSchema = new Schema({
+const notificationSchema = new Schema({
   sender: {
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
-  question: {
+  message: {
     type: String,
-    required: true
-  },
-  response: {
-    type: String,
-    default:'',
     required: true
   },
   time: {
@@ -24,5 +19,5 @@ const chatSchema = new Schema({
 
 
 
-const chatModel = mongoose.model('chat', chatSchema)
-module.exports = chatModel
+const notificationModel = mongoose.model('notifications', notificationSchema)
+module.exports = notificationModel
