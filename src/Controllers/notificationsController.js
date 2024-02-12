@@ -16,6 +16,8 @@ const newNotification = async (req, res) => {
       })
      newNotify.save()
     }
+    res.status(200).json('notification sent')
+
   } catch (error) {
     console.log(error)
   }
