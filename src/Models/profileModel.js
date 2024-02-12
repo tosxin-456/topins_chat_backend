@@ -13,46 +13,53 @@ const profileSchema = new Schema({
   },
   email: {
     type: String,
-    default:'',
     required: true
   },
   avatar: {
-    type: Date,
-    timestamps: true
+    type:String,
+    default:'https://res.cloudinary.com/dba1aezsn/image/upload/v1707492360/Google_h25khv.jpg'
   },
   number: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true
   },
   age: {
-    type: String,
+    type: Number,
     required: true
   },
   gender: {
     type: String,
-    default:'',
     required: true
   },
   height: {
-    type: Date,
-    timestamps: true
+    type: String,
+    default:" ",
+    required: true
+  },  
+  weight: {
+    type: String,
+    default:" ",
+    required: true
   },  
   medicalConditions: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
+    default:" ",
     required: true
   },
   alergies: {
     type: String,
+    default:" ",
     required: true
+  },
+  verified: {
+    type: Boolean,
+    default:false
   },
   theme: {
     type: String,
-    default:'',
+    default: 'light',
+    enum:['light', 'dark'],
     required: true
-  },
-  avatar: {
-    type: Date,
-    timestamps: true
   }
 });
 

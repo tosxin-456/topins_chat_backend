@@ -6,16 +6,21 @@ const userSchema = new schema({
     type:String,
     required:true 
   },
-  avatar: {
-    type:String,
-    default:'https://res.cloudinary.com/dba1aezsn/image/upload/v1707492360/Google_h25khv.jpg'
-  },
   name: {
     type:String,
     required:true
   },
   email: {
     type: String, 
+    required:true
+  },
+  age: {
+    type: String, 
+    required:true
+  },
+  gender: {
+    type: String,
+    enum:['M', 'F'],
     required:true
   },
   password: {
