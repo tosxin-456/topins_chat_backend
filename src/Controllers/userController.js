@@ -69,6 +69,7 @@ const register = async (req, res) => {
       const name = req.body.name;
       const email = req.body.email;
       const gender = req.body.gender
+      const role = req.body.role
       const age = req.body.age
       const firstLetter = name.charAt(0).toUpperCase();
       const lastLetter = name.charAt(-1).toUpperCase();
@@ -81,6 +82,7 @@ const register = async (req, res) => {
         email,
         gender,
         age,
+        role,
         password:passwordMatched,
         fullDate,
         fullTime
