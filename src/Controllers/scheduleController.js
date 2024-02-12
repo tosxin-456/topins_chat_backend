@@ -67,6 +67,24 @@ const deleteSchedule = async (req, res) => {
     }
 }
 
+
+const checkForTasks = async () => {
+  try {
+    const allSchedules = await Schedule.find({ $or: [{ type: 'Habit' }, { type: 'RecurringTask' }] })
+   
+    allSchedules.forEach(async (schedule) => {
+      if (allSchedules.type === 'RecurringTask') {
+         
+       }
+  });
+
+
+  } catch (error) {
+    
+  }
+}
+
+
 module.exports = {
     createSchedule,
     getAllSchedules,
