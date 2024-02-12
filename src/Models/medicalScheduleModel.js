@@ -21,7 +21,12 @@ const scheduleSchema = new Schema({
         type: Date,
         required: true
     },
-    endDate: Date,
+  endDate: {
+    type: Date,
+    required: function () {
+      return this.type === 'SingleTask';
+  }
+  },
     frequency: {
         type: String,
         enum: ['Daily', 'Weekly', 'Monthly'],
@@ -39,7 +44,20 @@ const scheduleSchema = new Schema({
     // For single tasks
     dueDate: {
         type: Date,
-        // required for single tasks
+      // required for single tasks
+      default: function () {
+        if (this.type === 'RecurringTask' && this.frequecy === 'Daily') {
+          return new Date(Date.now() + (24 * 60 * 60 * 1000));
+        } 
+        else if (this.type === 'RecurringTask' && this.frequecy === 'Weekly') {
+          return new Date(Date.now() + (24 * 60 * 60 * 1000 * 7));
+        }
+        else if (this.type === 'RecurringTask' && this.frequecy === 'Monthly') {
+          const currentDate = new Date();
+          const nextMonth = (currentDate.getMonth() + 1) % 12; 
+          return nextMonth;
+        }
+      },
         required: function () {
             return this.type === 'SingleTask';
         }
