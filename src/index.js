@@ -1,12 +1,12 @@
 /*
   * a more presentable and ordered version 
 */
-
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const cors = require('cors');
+const User = require('../src/Models/userModel')
 const bodyParser = require('body-parser');
 const Db = require('../config/db');
 require('dotenv').config();
@@ -33,6 +33,7 @@ Db();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 app.use(session({
   resave: false,
   saveUninitialized: true,
@@ -72,6 +73,7 @@ app.get('/', function(req, res) {
   res.render('pages/auth');
 });
 
+
 app.get('/success', (req, res) => res.send(req.user));
 app.get('/error', (req, res) => res.send("Error logging in"));
 
@@ -80,10 +82,16 @@ app.get('/auth/google',
 
 app.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/error' }),
-  function(req, res) {
+  function (req, res) {
+    // const { id, displayName, email } = req.user;
+  //  console.log(req.user)
+    // Create a new instance of User model
     res.redirect('/success');
   });
 
+
+
+  
 // Server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
