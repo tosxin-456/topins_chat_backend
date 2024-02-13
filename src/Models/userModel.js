@@ -15,7 +15,8 @@ const userSchema = new schema({
     required:true
   },
   age: {
-    type: String, 
+    type: String,
+    default:" ",
     required:true
   },
   gender: {
@@ -25,10 +26,12 @@ const userSchema = new schema({
   },
   password: {
     type: String,
+    default:" ",
     required:true
   },
   number: {
     type: String,
+    default:" ",
     required:true
   },
   fullTime:{
