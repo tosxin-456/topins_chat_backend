@@ -1,6 +1,8 @@
+require('dotenv').config()
 const userModel = require('../Models/userModel')
 const profileModel = require('../Models/profileModel')
 const notificationModel = require('../Models/notificationModel')
+const jwt = require('jsonwebtoken')
 const currentDate = new Date()
 
 
@@ -58,7 +60,11 @@ const registerWuthGoogle = async (req, res) => {
 
     // Check if any documents were found with the given email
     if (findEmail) {
-      return res.status(409).json('An account already exists with this email');
+      const payload = {user_id:findEmail._id,name:findEmail.name, role:findEmail.role}
+        const secretKey = process.env.JWT_SECRET
+        const token = jwt.sign(payload, secretKey)
+        await userModel.updateOne({ _id: findEmail._id }, { Status: "Online" });
+        return res.status(200).json(token)
     }
 
     const fullName = capitalizeFirstLetters(reqDets._json.name);

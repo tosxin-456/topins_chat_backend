@@ -121,7 +121,7 @@ const login = async (req, res) => {
         const secretKey = process.env.JWT_SECRET
         const token = jwt.sign(payload, secretKey)
         res.status(200).json(token)
-        await userModel.updateOne({ id: user.id }, { Status: "Online" });
+        await userModel.updateOne({ _id: user._id }, { Status: "Online" });
       } else {
         res.status(401).json("Invalid credentials.");     
       }

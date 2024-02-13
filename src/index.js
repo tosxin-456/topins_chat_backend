@@ -91,7 +91,6 @@ app.get('/auth/google',
     if (registerResult) {
       responseSent = true;
     }
-
     if (!responseSent) {
       res.redirect('/success');
     }
