@@ -69,6 +69,7 @@ const register = async (req, res) => {
       const name = req.body.name;
       const email = req.body.email;
       const gender = req.body.gender
+      const role = req.body.role
       const age = req.body.age
       const firstLetter = name.charAt(0).toUpperCase();
       const lastLetter = name.charAt(-1).toUpperCase();
@@ -81,13 +82,15 @@ const register = async (req, res) => {
         email,
         gender,
         age,
+        role,
         password:passwordMatched,
         fullDate,
         fullTime
       });
       await newuser.save();
       const newProfile = new profileModel({
-        id: newuser._id,
+        id: newuser.id,
+        __id: newuser._id,
         name,
         number,
         email,
@@ -118,7 +121,7 @@ const login = async (req, res) => {
         const secretKey = process.env.JWT_SECRET
         const token = jwt.sign(payload, secretKey)
         res.status(200).json(token)
-        await userModel.updateOne({ id: user.id }, { Status: "Online" });
+        await userModel.updateOne({ _id: user._id }, { Status: "Online" });
       } else {
         res.status(401).json("Invalid credentials.");     
       }

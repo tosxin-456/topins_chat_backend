@@ -4,6 +4,10 @@ const Schema = mongoose.Schema
 
 const profileSchema = new Schema({
   id: {
+    type: String,
+    required: true
+  },
+  __id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
