@@ -89,7 +89,8 @@ const register = async (req, res) => {
       });
       await newuser.save();
       const newProfile = new profileModel({
-        id: newuser._id,
+        id: newuser.id,
+        __id: newuser._id,
         name,
         number,
         email,

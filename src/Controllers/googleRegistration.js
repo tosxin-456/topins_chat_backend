@@ -1,5 +1,6 @@
 const userModel = require('../Models/userModel')
 const profileModel = require('../Models/profileModel')
+const notificationModel = require('../Models/notificationModel')
 const currentDate = new Date()
 
 
@@ -79,15 +80,22 @@ const registerWuthGoogle = async (req, res) => {
 
     // Assuming profileModel is defined and saving user profile is necessary
     const newProfile = new profileModel({
-      id: newUser._id,
+      id: newUser.id,
+      __id:newUser._id,
       name: newUser.name,
       number: newUser.number,
       email: newUser.email,
       gender: newUser.gender,
       age: newUser.age // Assuming age is available in the userModel
     });
-
     await newProfile.save();
+
+    const message = `Hey there, ${newUser.name}! 🌟 Welcome to senexCare! We're thrilled to have you onboard our platform! Get ready for an incredible journey ahead. To make the most of your experience, don't forget to update your details. Let's embark on this exciting adventure together! 🚀`
+    const newNotify = new notificationModel({
+      message
+    })
+    newNotify.save()
+    
   } catch (error) {
     console.error(error);
     return res.status(500).json('An error occurred while registering');
