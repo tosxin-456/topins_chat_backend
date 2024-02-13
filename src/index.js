@@ -9,6 +9,7 @@ const cors = require('cors');
 const User = require('../src/Models/userModel')
 const bodyParser = require('body-parser');
 const Db = require('../config/db');
+const googleRegister = require('../src/Controllers/googleRegistration')
 require('dotenv').config();
 
 const app = express();
@@ -80,14 +81,23 @@ app.get('/error', (req, res) => res.send("Error logging in"));
 app.get('/auth/google', 
   passport.authenticate('google', { scope : ['profile', 'email'] }));
 
-app.get('/auth/google/callback', 
+  app.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/error' }),
-  function (req, res) {
-    // const { id, displayName, email } = req.user;
-  //  console.log(req.user)
-    // Create a new instance of User model
-    res.redirect('/success');
-  });
+  async function (req, res) {
+    let responseSent = false;
+
+    const registerResult = await googleRegister.registerWuthGoogle(req, res);
+    
+    if (registerResult) {
+      responseSent = true;
+    }
+
+    if (!responseSent) {
+      res.redirect('/success');
+    }
+  }
+);
+
 
 
 

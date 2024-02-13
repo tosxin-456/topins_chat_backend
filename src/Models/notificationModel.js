@@ -5,7 +5,6 @@ const Schema = mongoose.Schema
 const notificationSchema = new Schema({
   sender: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true
   },
   message: {
     type: String,
