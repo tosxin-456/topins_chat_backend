@@ -11,21 +11,22 @@ const scheduleSchema = new Schema({
         type: String,
         enum: ['Habit', 'RecurringTask', 'SingleTask'],
         required: true
+  },
+  category: {
+    type: String,
+    enum: ['Medication', 'Appointment', 'Treatment'],
+    required:true
     },
     title: {
         type: String,
         required: true
     },
-    description: String,
+  description: {
+    type:String
+  },
     startDate: {
         type: Date,
         required: true
-    },
-  endDate: {
-    type: Date,
-    required: function () {
-      return this.type === 'SingleTask';
-  }
   },
     frequency: {
         type: String,
@@ -35,24 +36,26 @@ const scheduleSchema = new Schema({
             return this.type !== 'SingleTask';
         }
     },
-    // For recurring tasks
-    daysOfWeek: [{
-        type: Number,
-        min: 0,
-        max: 6
-    }],
-    // For single tasks
+    // For recurring tasks and habits
+  daysOfWeek: {
+    type: [Number],
+    required: function () {
+      if (this.type === 'RecurringTask' || this.type === 'Habit') {
+          return true
+        }
+      }
+    },
     dueDate: {
         type: Date,
       // required for single tasks
       default: function () {
-        if (this.type === 'RecurringTask' && this.frequecy === 'Daily') {
+        if (this.type === 'RecurringTask' || this.type ==='Habit' && this.frequecy === 'Daily') {
           return new Date(Date.now() + (24 * 60 * 60 * 1000));
         } 
-        else if (this.type === 'RecurringTask' && this.frequecy === 'Weekly') {
+        else if (this.type === 'RecurringTask' || this.type ==='Habit' && this.frequecy === 'Weekly') {
           return new Date(Date.now() + (24 * 60 * 60 * 1000 * 7));
         }
-        else if (this.type === 'RecurringTask' && this.frequecy === 'Monthly') {
+        else if (this.type === 'RecurringTask' || this.type ==='Habit' && this.frequecy === 'Monthly') {
           const currentDate = new Date();
           const nextMonth = (currentDate.getMonth() + 1) % 12; 
           return nextMonth;

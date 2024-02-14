@@ -79,7 +79,7 @@ app.get('/success', (req, res) => res.send(req.user));
 app.get('/error', (req, res) => res.send("Error logging in"));
 
 app.get('/auth/google', 
-  passport.authenticate('google', { scope : ['profile', 'email'] }));
+  passport.authenticate('google', { scope : ['profile', 'email', 'https://www.googleapis.com/auth/user.birthday.read', 'https://www.googleapis.com/auth/user.gender.read'] }));
 
   app.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/error' }),
