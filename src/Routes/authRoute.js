@@ -1,7 +1,8 @@
 // authRoutes.js
 const express = require('express');
-const passport = require('../../config/passportConfig');
 const router = express.Router();
+const passport = require('../../config/passportConfig');
+const googleRegister = require('../Controllers/googleRegistration')
 
 router.get('/', function(req, res) {
   res.render('pages/auth');

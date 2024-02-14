@@ -8,6 +8,8 @@ const middlewareConfig = require('../config/middlewareConfig');
 const User = require('../src/Models/userModel')
 const authRoute = require('./Routes/authRoute');
 const userRoute = require('./Routes/userRoute');
+// Create an Express application
+const app = express();
 Db();
 
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.CALLBACK_URI) {
