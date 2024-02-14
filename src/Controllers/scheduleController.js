@@ -2,15 +2,21 @@ const Schedule = require('../Models/medicalScheduleModel'); // Assuming the mode
 
 // Controller function to create a new schedule
 const createSchedule = async (req, res)=> {
-  try {
-      const addSchedule = {...req.body}
-        const newSchedule = new Schedule(addSchedule);
-         await newSchedule.save();
-        res.status(201).json('new schedule created');
-    } catch (error) {
+    try {
+      const user = req.user
+        const addSchedule = { ...req.body };
+        const dateTimeString = `${req.body._date}T${req.body.time}`;
+        const dueDate = new Date(dateTimeString); 
+        console.log(dueDate)
+    const newSchedule = new Schedule({user, ...addSchedule, dueDate }); 
+    await newSchedule.save();
+    res.status(201).json('New schedule created');
+  } catch (error) {
+      console.log(error)
         res.status(400).json('an error occured');
     }
 }
+
 
 // Controller function to get all schedules
 const getAllSchedules = async (req, res) => {

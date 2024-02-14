@@ -9,7 +9,7 @@ const scheduleSchema = new Schema({
   },
     type: {
         type: String,
-        enum: ['Habit', 'RecurringTask', 'SingleTask'],
+        enum: [ 'RecurringTask', 'SingleTask'],
         required: true
   },
   category: {
@@ -24,9 +24,11 @@ const scheduleSchema = new Schema({
   description: {
     type:String
   },
-    startDate: {
+  startDate: {
         type: Date,
-        required: true
+        required: function () {
+          return this.type !== 'SingleTask';
+      }
   },
     frequency: {
         type: String,
@@ -40,22 +42,20 @@ const scheduleSchema = new Schema({
   daysOfWeek: {
     type: [Number],
     required: function () {
-      if (this.type === 'RecurringTask' || this.type === 'Habit') {
-          return true
-        }
+      return this.type === 'RecurringTask';
       }
-    },
+  },
     dueDate: {
         type: Date,
       // required for single tasks
       default: function () {
-        if (this.type === 'RecurringTask' || this.type ==='Habit' && this.frequecy === 'Daily') {
+        if (this.type === 'RecurringTask' && this.frequecy === 'Daily') {
           return new Date(Date.now() + (24 * 60 * 60 * 1000));
         } 
-        else if (this.type === 'RecurringTask' || this.type ==='Habit' && this.frequecy === 'Weekly') {
+        else if (this.type === 'RecurringTask' && this.frequecy === 'Weekly') {
           return new Date(Date.now() + (24 * 60 * 60 * 1000 * 7));
         }
-        else if (this.type === 'RecurringTask' || this.type ==='Habit' && this.frequecy === 'Monthly') {
+        else if (this.type === 'RecurringTask' && this.frequecy === 'Monthly') {
           const currentDate = new Date();
           const nextMonth = (currentDate.getMonth() + 1) % 12; 
           return nextMonth;
