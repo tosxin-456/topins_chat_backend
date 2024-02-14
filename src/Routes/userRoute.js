@@ -7,11 +7,10 @@ const chat = require('../Controllers/chatController')
 const notify = require('../Controllers/notificationsController')
 const profileUpdate = require('../Controllers/profileController')
 
+// route.get('/', (req,res) => {
+//   res.json('User Route')
+// })
 
-
-route.get('/', (req,res) => {
-  res.json('working')
-})
 
 route.post('/register', userController.register)
 
