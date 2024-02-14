@@ -3,7 +3,6 @@
 */
 const express = require('express');
 const Db = require('../config/db');
-const googleRegister = require('../src/Controllers/googleRegistration')
 const middlewareConfig = require('../config/middlewareConfig');
 const User = require('../src/Models/userModel')
 const authRoute = require('./Routes/authRoute');
