@@ -15,8 +15,17 @@ router.get('/auth/google',
 
 router.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/error' }),
-  function(req, res) {
-    res.redirect('/success');
+  async function (req, res) {
+    let responseSent = false;
+
+    const registerResult = await googleRegister.registerWuthGoogle(req, res);
+    
+    if (registerResult) {
+      responseSent = true;
+    }
+    if (!responseSent) {
+      res.redirect('/success');
+    }
   });
 
 module.exports = router;
