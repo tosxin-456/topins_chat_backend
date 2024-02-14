@@ -1,9 +1,11 @@
 require('dotenv').config()
-const dotenv = require('../../.env')
 const userModel = require('../Models/userModel')
 const currentDate = new Date();
 const cryptoHash = require('node:crypto')
 const jwt = require('jsonwebtoken')
+const profileModel = require('../Models/profileModel')
+
+
 
 let month = currentDate.getMonth() + 1;
 if (month > 12) {
@@ -66,6 +68,9 @@ const register = async (req, res) => {
       const number = req.body.number
       const name = req.body.name;
       const email = req.body.email;
+      const gender = req.body.gender
+      const role = req.body.role
+      const age = req.body.age
       const firstLetter = name.charAt(0).toUpperCase();
       const lastLetter = name.charAt(-1).toUpperCase();
       const randomNumber = generateRandomNumber(4);
@@ -75,11 +80,24 @@ const register = async (req, res) => {
         name,
         number,
         email,
+        gender,
+        age,
+        role,
         password:passwordMatched,
         fullDate,
         fullTime
       });
       await newuser.save();
+      const newProfile = new profileModel({
+        id: newuser.id,
+        __id: newuser._id,
+        name,
+        number,
+        email,
+        gender,
+        age
+    })
+      await newProfile.save();
       res.json(`new user unique id is ${newuser.id}`);
     }
   } catch (error) {
@@ -103,7 +121,7 @@ const login = async (req, res) => {
         const secretKey = process.env.JWT_SECRET
         const token = jwt.sign(payload, secretKey)
         res.status(200).json(token)
-        await userModel.updateOne({ id: user.id }, { Status: "Online" });
+        await userModel.updateOne({ _id: user._id }, { Status: "Online" });
       } else {
         res.status(401).json("Invalid credentials.");     
       }

@@ -6,7 +6,7 @@ const  OpenAI = require('openai');
 
 
 const openai = new OpenAI( {
-  apiKey : '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'
+  apiKey : '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'
 });
 
 
@@ -21,8 +21,8 @@ const newChatUser = async (req, res) => {
       const question =  req.body.question
       const response = await openai.chat.completions.create({
         model:'gpt-3.5-turbo',
-        messages: [{ "role": "user", "content": question + ",in less than 50 words" }],
-        max_tokens:50
+        messages: [{ "role": "user", "content": question + ",answer only if the question is health related in less than 100 words" }],
+        max_tokens:100
       })
       const answer = response.choices[0].message.content
       res.status(200).json(answer)
