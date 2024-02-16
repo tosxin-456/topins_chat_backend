@@ -2,7 +2,7 @@
   "name": "health-app-backend",
   "version": "1.0.0",
   "description": "basic backend for senexCare",
-  "main": "node ./src/index.js",
+  "start": "node ./src/index.js",
   "scripts": {
     "dev": "nodemon ./src/index.js"
   },
