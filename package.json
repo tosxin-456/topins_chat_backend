@@ -2,9 +2,10 @@
   "name": "health-app-backend",
   "version": "1.0.0",
   "description": "basic backend for senexCare",
-  "start": "node ./src/index.js",
+  "main": "node ./src/index.js",
   "scripts": {
-    "dev": "nodemon ./src/index.js"
+    "dev": "nodemon ./src/index.js",
+    "start": "node ./src/index.js"
   },
   "author": "Topins and Hendrix",
   "license": "ISC",
