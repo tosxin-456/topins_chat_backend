@@ -1,106 +1,167 @@
 /*
-  * a more presentable and ordered version 
+  * 
 */
 const express = require('express');
-const session = require('express-session');
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-const cors = require('cors');
-const User = require('../src/Models/userModel')
-const bodyParser = require('body-parser');
 const Db = require('../config/db');
-const googleRegister = require('../src/Controllers/googleRegistration')
-require('dotenv').config();
+const middlewareConfig = require('../config/middlewareConfig');
+const User = require('../src/Models/userModel')
+const authRoute = require('./Routes/authRoute');
+const userRoute = require('./Routes/userRoute');
+/*
+  * Calender shittt
+*/
+const authorize = require('./Calender/authorization');
+const listEventsRoute = require('./Calender/EventsList');
+const scheduleEventRoute = require('./Calender/EventsSchedule');
+const scheduleMedicationReminderRoute = require('./Calender/scheduleMedicationReminder');
 
+//create and app express app
 const app = express();
 
-let port;
+// Store the authenticated client globally
+let auth; 
 
-// mongodb default port 27017
-// slightly made a tweek so as not to conflic port numbers
-// Check if Google authentication is enabled
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.CALLBACK_URI) {
-  port = process.env.PORT || 27226; //Sets Default to port 27226 if PORT env variable is not set
-} else {
-  port = 33456; 
-}
-
-//const port = process.env.PORT || 3000;
-
-// Database setup
+// Initialize Database
 Db();
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// const port = process.env.PORT;
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.CALLBACK_URI) {
+    port = process.env.PORT || 27226; //Sets Default to port 27226 if PORT env variable is not set
+} else {
+    port = 33456; 
+}
 
-app.use(session({
-  resave: false,
-  saveUninitialized: true,
-  secret: 'SECRET'
-}));
-app.use(passport.initialize());
-app.use(passport.session());
+// Middleware || google signin
+middlewareConfig(app);
+
+// Middleware to handle authorization || Calender integration
+async function checkAuthorization(req, res, next) {
+    try {
+        if (!auth) {
+            auth = await authorize();
+        }
+        next();
+    } catch (error) {
+        console.error(`An error occurred during authorization: ${error}`);
+        res.status(500).json({ error: 'An error occurred during authorization.' });
+    }
+}
+
+// Use the authorization middleware for all routes except /authorize
+app.use((req, res, next) => {
+    if (req.path !== '/authorize') {
+        checkAuthorization(req, res, next);
+    } else {
+        next();
+    }
+});
 
 // View engine setup
 app.set('view engine', 'ejs');
+// app.set('views', './views');
 
 // Routes
-const userRoute = require('./Routes/userRoute');
+app.use('/', authRoute);
 app.use('/user', userRoute);
+/*
+* routes for calender
+*/
+app.use('/events', listEventsRoute);                  // http://localhost:3001/events/list-events
+app.use('/events', scheduleEventRoute);               // http://localhost:3001/events/schedule-event
+app.use('/events', scheduleMedicationReminderRoute);  // http://localhost:3001/events/schedule-medication-reminder
 
-// Passport serialization and deserialization
-passport.serializeUser(function(user, cb) {
-  cb(null, user);
-});
+//: http://localhost:3001/authorize
+// Route for initial authorization
+// app.get('/authorize', async (req, res) => {
+//     try {
+//         res.json({ message: 'Authorization successful' });
+//         console.log(auth)
+//     } catch (error) {
+//         console.error(`An error occurred: ${error}`);
+//         res.status(500).json({ error: 'An error occurred during authorization.' });
+//     }
+// });
 
-passport.deserializeUser(function(obj, cb) {
-  cb(null, obj);
-});
+// http://localhost:3001/list-events
+// app.get('/list-events', async (req, res) => {
+//     try {
+//         const events = await listEvents(auth);
+//         res.json(events);
+//     } catch (error) {
+//         console.error(`An error occurred: ${error}`);
+//         res.status(500).json({ error: 'An error occurred while listing events.' });
+//     }
+// });
 
-// Passport Google OAuth 2.0 configuration
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: process.env.CALLBACK_URI
-},
-function(accessToken, refreshToken, profile, done) {
-  return done(null, profile);
-}));
+// Route to schedule an event
+// app.get('/schedule-event', async (req, res) => {
+//     try {
+//         const event = await scheduleEvent(auth);
+//         res.json({ message: 'Event scheduled successfully', event });
+//     } catch (error) {
+//         console.error(`An error occurred: ${error}`);
+//         res.status(500).json({ error: 'An error occurred while scheduling event.' });
+//     }
+// });
 
-// Authentication routes
-app.get('/', function(req, res) {
-  res.render('pages/auth');
-});
-
-
-app.get('/success', (req, res) => res.send(req.user));
-app.get('/error', (req, res) => res.send("Error logging in"));
-
-app.get('/auth/google', 
-  passport.authenticate('google', { scope : ['profile', 'email'] }));
-
-  app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/error' }),
-  async function (req, res) {
-    let responseSent = false;
-
-    const registerResult = await googleRegister.registerWuthGoogle(req, res);
-    
-    if (registerResult) {
-      responseSent = true;
-    }
-    if (!responseSent) {
-      res.redirect('/success');
-    }
-  }
-);
+// app.get('/schedule-medication-reminder', async (req, res) => {
+//     try {
+//         const reminder = await scheduleMedicationReminder(auth);
+//         res.json(reminder);
+//     } catch (error) {
+//         console.error(`An error occurred: ${error}`);
+//         res.status(500).json({ error: 'An error occurred while scheduling medication reminder.' });
+//     }
+// });
 
 
+// // list events routes : http://localhost:3001/list-events
+// app.get('/list-events', async (req, res) => {
+//     try {
+//         const auth = await authorize();
+//         const events = await listEvents(auth);
+//         res.json(events);
+//     } catch (error) {
+//         console.error(`An error occurred: ${error}`);
+//         res.status(500).json({ error: 'An error occurred while listing events.' });
+//     }
+// });
 
+// // Define route to schedule an event : http://localhost:3001/schedule-event
+// app.get('/schedule-event', async (req, res) => {
+//     try {
+//         const auth = await authorize();
+//         const event = await scheduleEvent(auth);
+//         res.json({ message: 'Event scheduled successfully', event });
+//     } catch (error) {
+//         console.error(`An error occurred: ${error}`);
+//         res.status(500).json({ error: 'An error occurred while scheduling event.' });
+//     }
+// });
 
-  
+// // Define route to schedule a medication reminder : http://localhost:3001/schedule-medication-reminder
+// app.get('/schedule-medication-reminder', async (req, res) => {
+//     try {
+//         const auth = await authorize();
+//         const reminder = await scheduleMedicationReminder(auth);
+//         res.json({ message: 'Medication reminder scheduled successfully', reminder });
+//     } catch (error) {
+//         console.error(`An error occurred: ${error}`);
+//         res.status(500).json({ error: 'An error occurred while scheduling medication reminder.' });
+//     }
+// });
+
+// const EventEmitter = require('events');
+// EventEmitter.defaultMaxListeners = 15;
+
+// authorize()
+//   .then(async (auth) => {
+//     await listEvents(auth);
+//     await scheduleEvent(auth);
+//     await scheduleMedicationReminder(auth);
+// })
+// .catch(console.error);
+
 // Server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

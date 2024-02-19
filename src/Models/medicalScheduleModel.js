@@ -9,39 +9,75 @@ const scheduleSchema = new Schema({
   },
     type: {
         type: String,
-        enum: ['Habit', 'RecurringTask', 'SingleTask'],
+        enum: [ 'RecurringTask', 'SingleTask'],
         required: true
+  },
+  category: {
+    type: String,
+    enum: ['Medication', 'Appointment', 'Treatment'],
+    required:true
     },
     title: {
         type: String,
         required: true
     },
-    description: String,
-    startDate: {
+  description: {
+    type:String
+  },
+  startDate: {
         type: Date,
-        required: true
-    },
-  endDate: {
-    type: Date,
-    required: function () {
-      return this.type === 'SingleTask';
-  }
+        required: function () {
+          return this.type !== 'SingleTask';
+      }
   },
     frequency: {
         type: String,
-        enum: ['Daily', 'Weekly', 'Monthly'],
-        // required for recurring tasks and habits
+        enum: ['Daily','Weekly','Monthly', 'SpecificDaysOfWeek', 'SpecificDaysOfWeek','SpecificDaysOfMonth','SpecificDaysOfYear','Repeat', ],
         required: function () {
             return this.type !== 'SingleTask';
         }
     },
-    // For recurring tasks
-    daysOfWeek: [{
-        type: Number,
-        min: 0,
-        max: 6
-    }],
-    // For single tasks
+  daysOfWeek: {
+    type: [Number],
+    select:false,
+    min: 0,
+    max:6,
+    required: function () {
+      if (this.type === 'RecurringTask' && this.frequecy === 'SpecificDaysOfWeek') {
+        return true;
+      }
+      }
+  },
+  daysOfMonth: {
+    type: [Number],
+    select:false,
+    required: function () {
+      if (this.type === 'RecurringTask' && this.frequecy === 'SpecificDaysOfMonth') {
+        return true;
+      }
+      }
+  },
+  daysOfYear: {
+    type: [Number],
+    select:false,
+    required: function () {
+      if (this.type === 'RecurringTask' && this.frequecy === 'SpecificDaysOfYear') {
+        return true;
+      }
+      else {
+        return false
+      }
+      }
+  },
+  Repeat: {
+    type: [Number],
+    select:false,
+    required: function () {
+      if (this.type === 'RecurringTask' && this.frequecy === 'Repeat') {
+        return true;
+      }
+      }
+  },
     dueDate: {
         type: Date,
       // required for single tasks
@@ -49,17 +85,36 @@ const scheduleSchema = new Schema({
         if (this.type === 'RecurringTask' && this.frequecy === 'Daily') {
           return new Date(Date.now() + (24 * 60 * 60 * 1000));
         } 
-        else if (this.type === 'RecurringTask' && this.frequecy === 'Weekly') {
+        else if (this.type === 'RecurringTask' && this.frequecy === 'Weeky') {
           return new Date(Date.now() + (24 * 60 * 60 * 1000 * 7));
-        }
+        } 
         else if (this.type === 'RecurringTask' && this.frequecy === 'Monthly') {
-          const currentDate = new Date();
-          const nextMonth = (currentDate.getMonth() + 1) % 12; 
-          return nextMonth;
-        }
+          const currentDate = new Date(); // Get current date
+    const currentMonth = currentDate.getMonth(); // Get current month (0-indexed)
+    const currentYear = currentDate.getFullYear(); // Get current year
+
+    // Calculate the next month
+     let nextMonth = currentMonth + 1;
+     let nextYear = currentYear;
+
+     if (nextMonth === 12) { // If the next month is December, reset to January of the next year
+        nextMonth = 0; // January is 0
+        nextYear++;
+    }
+
+    // Get the first day of the next month
+    const nextMonthDate = new Date(nextYear, nextMonth, 1);
+
+    return nextMonthDate;
+        } 
       },
-        required: function () {
-            return this.type === 'SingleTask';
+      required: function () {
+        if (this.type === 'SingleTask') {           
+          return true
+        }
+        else if (this.type === 'RecurringTask' && this.frequecy === 'Daily') {
+          return true
+        }
         }
   },
     completed: {
