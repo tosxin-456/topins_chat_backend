@@ -122,6 +122,9 @@ const checkForTasks = async () => {
       allSchedules.forEach(async (schedule) => {
         if (schedule.type === 'RecurringTask' && schedule.frequency === 'Daily') {
             const Today = new Date()
+            if (Today > schedule.dueDate) {
+                const newSchedule = new Schedule({user:schedule.user,startDate:schedule.dueDate , dueDate:(schedule.dueDate*24),category:schedule.category,title:schedule.title,frequncy:schedule.frequency, decription:schedule.description }); 
+            }
             
         }
       });
@@ -134,7 +137,7 @@ const checkForTasks = async () => {
   checkForTasks();
   
   // Update the tasks every hour
-  setInterval(checkForTasks, 60 * 60 * 1000); // 60 minutes * 60 seconds * 1000 milliseconds = 1 hour
+setInterval(checkForTasks, 60 * 60 * 1000 * 24); // 60 minutes * 60 seconds * 1000 milliseconds = 1 hour
   
 
 
