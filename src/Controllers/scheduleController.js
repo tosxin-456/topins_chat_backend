@@ -116,20 +116,26 @@ const deleteSchedule = async (req, res) => {
 
 
 const checkForTasks = async () => {
-  try {
-    const allSchedules = await Schedule.find({ $or: [{ type: 'Habit' }, { type: 'RecurringTask' }] })
-   
-    allSchedules.forEach(async (schedule) => {
-      if (allSchedules.type === 'RecurringTask') {
-         
-       }
-  });
-
-
-  } catch (error) {
-    
-  }
-}
+    try {
+      const allSchedules = await Schedule.find({ type: 'RecurringTask' });
+      
+      allSchedules.forEach(async (schedule) => {
+        if (schedule.type === 'RecurringTask' && schedule.frequency === 'Daily') {
+            const Today = new Date()
+            
+        }
+      });
+    } catch (error) {
+      console.error('Error occurred while checking for tasks:', error);
+    }
+  };
+  
+  // Call checkForTasks initially
+  checkForTasks();
+  
+  // Update the tasks every hour
+  setInterval(checkForTasks, 60 * 60 * 1000); // 60 minutes * 60 seconds * 1000 milliseconds = 1 hour
+  
 
 
 module.exports = {
