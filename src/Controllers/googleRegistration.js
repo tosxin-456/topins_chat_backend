@@ -55,7 +55,7 @@ const registerWuthGoogle = async (req, res) => {
   try {
     const reqDets = req.user;
     const findEmail = await userModel.findOne({ email: reqDets._json.email });
-    console.log(reqDets);
+    // console.log(reqDets);
     // Check if any documents were found with the given email
     if (findEmail) {
       const payload = {

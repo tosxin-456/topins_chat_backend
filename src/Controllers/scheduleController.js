@@ -1,16 +1,63 @@
-const Schedule = require('../Models/medicalScheduleModel'); // Assuming the model file is in a 'models' directory
+const Schedule = require('../Models/medicalScheduleModel');
 
-// Controller function to create a new schedule
 const createSchedule = async (req, res)=> {
-  try {
-      const addSchedule = {...req.body}
-        const newSchedule = new Schedule(addSchedule);
-         await newSchedule.save();
-        res.status(201).json('new schedule created');
-    } catch (error) {
+    try {
+        if (req.body.type === 'SingleTask') {
+            const user = req.user
+              const addSchedule = { ...req.body };
+              const dateTimeString = `${req.body._date}T${req.body.time}`;
+              const dueDate = new Date(dateTimeString); 
+          const newSchedule = new Schedule({user, ...addSchedule, dueDate }); 
+            await newSchedule.save();
+        res.status(201).json('New single schedule created');
+        }
+        else if (req.body.type === 'RecurringTask' && req.body.frequency === 'Daily') {
+            const user = req.user
+            const addSchedule = { ...req.body };
+            const dateTimeString = req.body._date;
+            const startDate = new Date(dateTimeString); 
+        const newSchedule = new Schedule({user, ...addSchedule, startDate }); 
+        await newSchedule.save();
+        res.status(201).json('New daily recurring schedule created');
+        }
+        else if (req.body.type === 'RecurringTask' && req.body.frequency === 'Weekly') {
+            const user = req.user
+            const addSchedule = { ...req.body };
+            const dateTimeString = req.body._date;
+            const startDate = new Date(dateTimeString); 
+            const year = startDate.getFullYear();
+            const month = startDate.getMonth();
+
+            const nextMonthDate = new Date(year, month + 1, 1);
+            const dueDate = new Date(startDate * 7)
+        const newSchedule = new Schedule({user, ...addSchedule, startDate , dueDate }); 
+        await newSchedule.save();
+        res.status(201).json('New weekly recurring schedule created');
+        }
+        else if (req.body.type === 'RecurringTask' && req.body.frequency === 'Monthly') {
+            const user = req.user
+            const addSchedule = { ...req.body };
+            const dateTimeString = req.body._date;
+            const startDate = new Date(dateTimeString); 
+            let nextMonth = startDate.getMonth() + 1;
+            let nextYear = startDate.getFullYear();
+
+          if (nextMonth === 12) {
+             nextMonth = 0; 
+            nextYear++;
+               }
+            const dayOfMonth = startDate.getDate();
+            const dueDate = new Date(nextYear, nextMonth, dayOfMonth);
+            const newSchedule = new Schedule({user, ...addSchedule, startDate , dueDate }); 
+            await newSchedule.save();
+        res.status(201).json('New monthly recurring schedule created');
+      }
+  } catch (error) {
+      console.log(error)
         res.status(400).json('an error occured');
     }
 }
+
 
 // Controller function to get all schedules
 const getAllSchedules = async (req, res) => {
