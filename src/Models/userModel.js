@@ -21,7 +21,7 @@ const userSchema = new schema({
   },
   gender: {
     type: String,
-    enum:['M', 'F'],
+    enum:['M', 'F', 'Rather Not Say'],
     required:true
   },
   password: {
