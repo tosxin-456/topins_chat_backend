@@ -28,6 +28,11 @@ route.post('/notify', jwtToken.verifyToken, jwtToken.verifyAdmin, notify.newNoti
 
 route.post('/scheduleNew', jwtToken.verifyToken, schedule.createSchedule)
 
+route.patch('/schedule/:_id', jwtToken.verifyToken, schedule.updateSchedule)
+
+route.get('/schedule/all', jwtToken.verifyToken, jwtToken.verifyAdmin, schedule.getAllSchedules)
+
+route.get('/schedule/single', jwtToken.verifyToken, schedule.getScheduleByIdForUser)
 
 route.post('/profileUpdate', jwtToken.verifyToken, profileUpdate.updateProfile)
 

@@ -71,6 +71,17 @@ const getAllSchedules = async (req, res) => {
     }
 }
 
+const getAllSingleSchedules = async (req, res) => {
+    const userId = req.user._id
+    try {
+        const schedules = await Schedule.find({user:userId});
+        res.status(200).json(schedules);
+    } catch (error) {
+        res.status(500).json('an error occured');
+    }
+}
+
+
 // Controller function to get a single schedule by ID
 const getScheduleByIdForUser = async (req, res) => {
   const userId = req.user._id
@@ -88,15 +99,16 @@ const getScheduleByIdForUser = async (req, res) => {
 // Controller function to update a schedule by ID
 const updateSchedule = async (req, res) => {
   const userId = req.user._id
-  const title  = req.body.title
+  const _id  = req.params._id
   const updateSchedule = {...req.body}
     try {
-      const updatedSchedule = await Schedule.findOneAndUpdate({ $and: [{ user: userId },{ title }] }, updateSchedule, { new: true });
+      const updatedSchedule = await Schedule.findOneAndUpdate({ $and: [{ user: userId },{ _id }] }, updateSchedule, { new: true });
         if (!updatedSchedule) {
             return res.status(404).json({ message: 'Schedule not found' });
         }
         res.status(200).json(updatedSchedule);
     } catch (error) {
+        console.log(error)
         res.status(400).json('an error occured');
     }
 }
@@ -183,6 +195,7 @@ const checkForTasks = async () => {
 
 
 module.exports = {
+    getAllSingleSchedules,
     checkForTasks,
     createSchedule,
     getAllSchedules,
