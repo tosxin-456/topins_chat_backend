@@ -7,8 +7,9 @@ const middlewareConfig = require('../config/middlewareConfig');
 const authRoute = require('./Routes/authRoute');
 const userRoute = require('./Routes/userRoute');
 const checkForTasks  = require('./Controllers/scheduleController')
+const gemini = require('./Controllers/geminiController')
 
-
+// gemini()
 // Create an Express application
 const app = express();
 Db();

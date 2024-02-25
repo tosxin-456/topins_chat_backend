@@ -1,13 +1,11 @@
+require('dotenv').config()
 // Import necessary modules
 const chatModel = require('../Models/chatModel'); // Assuming you have a model for chat messages
 const userModel = require('../Models/userModel')
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const  OpenAI = require('openai');
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
-
-const openai = new OpenAI( {
-  apiKey : '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'
-});
 
 
 const newChatUser = async (req, res) => {
@@ -18,18 +16,16 @@ const newChatUser = async (req, res) => {
       res.status(404).json('no user with this account exists')
     }
     else {
-      const question =  req.body.question
-      const response = await openai.chat.completions.create({
-        model:'gpt-3.5-turbo',
-        messages: [{ "role": "user", "content": question + ",answer only if the question is health related in less than 100 words" }],
-        max_tokens:100
-      })
-      const answer = response.choices[0].message.content
-      res.status(200).json(answer)
+      const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+      const prompt = req.body.question
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = await response.text();
+      return  res.status(200).json(text)
       const newChat = new chatModel({
         sender: patient,
         question,
-        response:answer
+        response:text
       })
       newChat.save()
     }
