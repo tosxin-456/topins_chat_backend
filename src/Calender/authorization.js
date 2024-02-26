@@ -8,7 +8,7 @@ const path = require('path');
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 const CREDENTIALS_PATH = path.join(process.cwd(), './src/credentials.json');
-// const { CREDENTIALS_PATH } = require('./credentials');
+// const { CREDENTIALS_PATH } = require('./credentials')
 
 async function authorize() {
   let credentials = await loadSavedCredentialsIfExist();

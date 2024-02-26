@@ -120,7 +120,11 @@ const scheduleSchema = new Schema({
     completed: {
       type: Boolean,
       default:false
-    }
+  },
+  checked: {
+    type:Boolean,
+    default:false
+  }
 });
 
 // Create a Mongoose model

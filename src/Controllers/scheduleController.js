@@ -1,15 +1,17 @@
 const Schedule = require('../Models/medicalScheduleModel');
+const notification = require('../Models/notificationModel')
 
 const createSchedule = async (req, res)=> {
     try {
         if (req.body.type === 'SingleTask') {
             const user = req.user
               const addSchedule = { ...req.body };
-              const dateTimeString = `${req.body._date}T${req.body.time}`;
+             const dateTimeString = `${req.body._date}T${req.body.time}`;
+              startDate = new Date(dateTimeString); 
               const dueDate = new Date(dateTimeString); 
-          const newSchedule = new Schedule({user, ...addSchedule, dueDate }); 
-            await newSchedule.save();
-        res.status(201).json('New single schedule created');
+              const newSchedule = new Schedule({user, ...addSchedule, dueDate , startDate }); 
+              await newSchedule.save();
+              res.status(201).json('New single schedule created');
         }
         else if (req.body.type === 'RecurringTask' && req.body.frequency === 'Daily') {
             const user = req.user
@@ -69,6 +71,17 @@ const getAllSchedules = async (req, res) => {
     }
 }
 
+const getAllSingleSchedules = async (req, res) => {
+    const userId = req.user._id
+    try {
+        const schedules = await Schedule.find({user:userId});
+        res.status(200).json(schedules);
+    } catch (error) {
+        res.status(500).json('an error occured');
+    }
+}
+
+
 // Controller function to get a single schedule by ID
 const getScheduleByIdForUser = async (req, res) => {
   const userId = req.user._id
@@ -86,15 +99,16 @@ const getScheduleByIdForUser = async (req, res) => {
 // Controller function to update a schedule by ID
 const updateSchedule = async (req, res) => {
   const userId = req.user._id
-  const title  = req.body.title
+  const _id  = req.params._id
   const updateSchedule = {...req.body}
     try {
-      const updatedSchedule = await Schedule.findOneAndUpdate({ $and: [{ user: userId },{ title }] }, updateSchedule, { new: true });
+      const updatedSchedule = await Schedule.findOneAndUpdate({ $and: [{ user: userId },{ _id }] }, updateSchedule, { new: true });
         if (!updatedSchedule) {
             return res.status(404).json({ message: 'Schedule not found' });
         }
         res.status(200).json(updatedSchedule);
     } catch (error) {
+        console.log(error)
         res.status(400).json('an error occured');
     }
 }
@@ -116,29 +130,73 @@ const deleteSchedule = async (req, res) => {
 
 
 const checkForTasks = async () => {
+    const allSchedules = await Schedule.find({ type: 'RecurringTask' });
+    console.log('started the task checker');
     try {
-      const allSchedules = await Schedule.find({ type: 'RecurringTask' });
-      
-      allSchedules.forEach(async (schedule) => {
-        if (schedule.type === 'RecurringTask' && schedule.frequency === 'Daily') {
-            const Today = new Date()
-            
+        // Get schedules for each model and process them
+        for (const schedule of allSchedules) {
+            if (schedule.checked === false) {
+                const today = new Date();
+                const scheduleDate = new Date(schedule.startDate);
+                
+                if (today > scheduleDate) {
+                    // Update checked flag only if today is after the schedule start date
+                    const checkedOnce = await Schedule.findByIdAndUpdate(schedule._id, { checked: true }, { new: true });
+                    if (!checkedOnce) {  
+                        console.log('An error occurred while trying to update schedule');
+                    }
+                    // Create a new task based on frequency
+                    if (schedule.frequency === 'Daily') {
+                        await Schedule.create({
+                            user: schedule.user,
+                            type: schedule.type,
+                            startDate: new Date(schedule.startDate.getTime() + (24 * 60 * 60 * 1000)),
+                            category: schedule.category,
+                            title: schedule.title,
+                            frequency: schedule.frequency,
+                            description: schedule.description
+                        });
+                    }
+                       else if (schedule.frequency === 'Weekly') {
+                        await Schedule.create({
+                            user: schedule.user,
+                            type: schedule.type,
+                            startDate: new Date(schedule.startDate.getTime() + (7 * 24 * 60 * 60 * 1000)),
+                            category: schedule.category,
+                            title: schedule.title,
+                            frequency: schedule.frequency,
+                            description: schedule.description
+                        });
+                    } else if (schedule.frequency === 'Monthly') {
+                        const newStartDate = new Date(schedule.startDate);
+                        newStartDate.setMonth(newStartDate.getMonth() + 1);
+                        const newDueDate = new Date(schedule.dueDate);
+                        newDueDate.setMonth(newDueDate.getMonth() + 1);
+                        await Schedule.create({
+                            user: schedule.user,
+                            type: schedule.type,
+                            startDate: newStartDate,
+                            dueDate: newDueDate,
+                            category: schedule.category,
+                            title: schedule.title,
+                            frequency: schedule.frequency,
+                            description: schedule.description
+                        });
+                    }
+                }
+            }
         }
-      });
     } catch (error) {
-      console.error('Error occurred while checking for tasks:', error);
+        console.error('Error occurred while checking for tasks:', error);
     }
-  };
-  
-  // Call checkForTasks initially
-  checkForTasks();
-  
-  // Update the tasks every hour
-  setInterval(checkForTasks, 60 * 60 * 1000); // 60 minutes * 60 seconds * 1000 milliseconds = 1 hour
+};
+
   
 
 
 module.exports = {
+    getAllSingleSchedules,
+    checkForTasks,
     createSchedule,
     getAllSchedules,
     getScheduleByIdForUser,
