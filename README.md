@@ -11,3 +11,5 @@
 
 ### Documentation ?
 find the documentation [here](./Documentation.md)
+
+to start the server, npm run start / npm run dev
