@@ -1,4 +1,4 @@
-const uri = 'mongodb+srv://Tosin:090711t@cluster0.dex1ht8.mongodb.net/senexCare';
+const uri = 'mongodb+srv://Tosin:090711t@cluster0.dex1ht8.mongodb.net/Topins_Chat';
 const mongoose = require('mongoose');
 
 const Db = () => {

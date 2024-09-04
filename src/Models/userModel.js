@@ -1,60 +1,55 @@
-const moongose = require('mongoose');
-const schema = moongose.Schema
+const moongose = require("mongoose");
+const schema = moongose.Schema;
 
 const userSchema = new schema({
-  id: {
-    type:String,
-    required:true 
-  },
   name: {
-    type:String,
-    required:true
+    type: String,
+    required: true
   },
   email: {
-    type: String, 
-    required:true
+    type: String,
+    required: true
   },
   age: {
     type: String,
-    default:" ",
-    required:true
+    default: " ",
+    required: true
   },
   gender: {
     type: String,
-    enum:['M', 'F', 'Rather Not Say'],
-    required:true
+    enum: ["M", "F", "Rather Not Say"],
+    required: true
   },
   password: {
     type: String,
-    default:" ",
-    required:true
+    default: " ",
+    required: true
   },
   number: {
     type: String,
-    default:" ",
-    required:true
-  },
-  fullTime:{
-    type: String,
-    required:true
-  },
-  fullDate: {
-    type: String,
-    required:true
+    default: " ",
+    required: true
   },
   status: {
     type: String,
-    default: 'Offline',
-    enum:['Offline','Online']
+    default: "Offline",
+    enum: ["Offline", "Online"]
   },
   role: {
     type: String,
-    default: 'patient',
-    enum:['patient','admin']
+    default: "user",
+    enum: ["user", "admin"]
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatededAt: {
+    type: Date,
+    default: Date.now
   }
-})
+});
 
+const userModel = moongose.model("users", userSchema);
 
-const userModel = moongose.model('users', userSchema)
-
-module.exports = userModel
+module.exports = userModel;

@@ -1,5 +1,5 @@
 {
-  "name": "health-app-backend",
+  "name": "chat-app-backend",
   "version": "1.0.0",
   "description": "basic backend for senexCare",
   "main": "node ./src/index.js",

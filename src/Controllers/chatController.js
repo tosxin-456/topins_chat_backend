@@ -21,7 +21,6 @@ const newChatUser = async (req, res) => {
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = await response.text();
-      return  res.status(200).json(text)
       const newChat = new chatModel({
         sender: patient,
         question,
@@ -29,6 +28,7 @@ const newChatUser = async (req, res) => {
       })
       newChat.save()
     }
+    return  res.status(200).json(text)
   } catch (error) {
     res.status(429).json('an error occured')
     console.log(error)
