@@ -44,7 +44,10 @@ const register = async (req, res) => {
         age
       });
       await newProfile.save();
-      res.json(`new user unique id is ${newuser.id}`);
+     const payload = { user_id: user._id, name: user.name, role: user.role };
+     const secretKey = process.env.JWT_SECRET;
+     const token = jwt.sign(payload, secretKey);
+     res.status(200).json(token);
     }
   } catch (error) {
     res.status(500).json("Could not save user.");
