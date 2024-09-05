@@ -35,26 +35,6 @@ const profileSchema = new Schema({
     type: String,
     required: true
   },
-  height: {
-    type: String,
-    default:" ",
-    required: true
-  },  
-  weight: {
-    type: String,
-    default:" ",
-    required: true
-  },  
-  medicalConditions: {
-    type: String,
-    default:" ",
-    required: true
-  },
-  alergies: {
-    type: String,
-    default:" ",
-    required: true
-  },
   verified: {
     type: Boolean,
     default:false

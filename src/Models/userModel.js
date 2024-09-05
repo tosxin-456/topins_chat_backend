@@ -40,6 +40,10 @@ const userSchema = new schema({
     default: "user",
     enum: ["user", "admin"]
   },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now
