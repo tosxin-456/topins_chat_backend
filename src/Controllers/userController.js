@@ -60,13 +60,16 @@ const login = async (req, res) => {
     const user = await userModel.findOne({ email: id });
 
     if (user) {
-      const passwordMatched =  hashValue(password);
+      const passwordMatched = hashValue(password);
       if (passwordMatched === user.password) {
         const payload = { user_id: user._id, name: user.name, role: user.role };
         const secretKey = process.env.JWT_SECRET;
         const token = jwt.sign(payload, secretKey);
         res.status(200).json(token);
-        await userModel.updateOne({ _id: user._id }, { Status: "Online", isVerified:true });
+        await userModel.updateOne(
+          { _id: user._id },
+          { Status: "Online", isVerified: true }
+        );
       } else {
         res.status(401).json("Invalid credentials.");
       }
