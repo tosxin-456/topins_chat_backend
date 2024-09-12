@@ -19,6 +19,22 @@ const updateProfile = async (req, res) => {
   }
 }
 
+const getProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const profile = await profileModel.findOne({ id: userId });
+
+    if (profile) {
+      res.status(200).json(profile);
+    } else {
+      res.status(404).json('Profile not found');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json('Internal server error');
+  }
+}
 
 
-module.exports = { updateProfile }
+
+module.exports = { updateProfile, getProfile }

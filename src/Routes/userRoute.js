@@ -11,6 +11,8 @@ route.post('/register', userController.register)
 
 route.post('/login', userController.login)
 
+route.get('/profile', profileUpdate.getProfile)
+
 route.post('/profilePic',jwtToken.verifyToken, profilePic.profilePictureUser)
 
 route.post('/chat', jwtToken.verifyToken, chat.newChatUser)
